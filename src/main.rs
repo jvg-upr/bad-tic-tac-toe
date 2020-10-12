@@ -76,6 +76,13 @@ fn minmax(player: Player, board: &Board) -> (Option<usize>, i32) {
     }
 }
 
+// takes a board and a player and makes the best possible move on the board.
+fn play(player: Player, mut board: Board) -> Board {
+    let best_play = minmax(player, &board).0.expect("Finished game");
+    board[best_play] = Some(player);
+    board
+}
+
 fn print_board(board: &Board) {
     let tile_to_char = |x: &Tile| match x {
         Some(true) => 'X',
