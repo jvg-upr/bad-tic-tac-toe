@@ -1,5 +1,8 @@
 type Player = bool;
 
+const X_PLAYER: Player = true;
+const O_PLAYER: Player = false;
+
 type Tile = Option<Player>;
 
 type Board = [Tile; 9];
@@ -38,7 +41,7 @@ fn is_lose(player: Player, board: &Board) -> bool {
 }
 
 fn is_draw(board: &Board) -> bool {
-    !is_win(true, board) && !is_lose(true, board) && board.iter().all(|x| x.is_some())
+    !is_win(X_PLAYER, board) && !is_lose(X_PLAYER, board) && board.iter().all(|x| x.is_some())
 }
 
 fn game_state(player: Player, board: &Board) -> Option<GameResult> {
@@ -85,8 +88,8 @@ fn play(player: Player, mut board: Board) -> Board {
 
 fn print_board(board: &Board) {
     let tile_to_char = |x: &Tile| match x {
-        Some(true) => 'X',
-        Some(false) => 'O',
+        Some(X_PLAYER) => 'X',
+        Some(O_PLAYER) => 'O',
         None => ' ',
     };
 
@@ -108,18 +111,18 @@ fn main() {
 
     let mut x = 0;
 
-    while game_state(true, &board).is_none() {
+    while game_state(X_PLAYER, &board).is_none() {
         print_board(&board);
 
         if x % 2 == 0 {
-            board = play(false, board);
+            board = play(O_PLAYER, board);
         } else {
             std::io::stdin().read_line(&mut input).unwrap();
 
             let index = input.trim().parse::<usize>().unwrap() - 1;
             input.clear();
 
-            board[index] = Some(true);
+            board[index] = Some(X_PLAYER);
         }
         x += 1;
     }
