@@ -102,7 +102,27 @@ fn print_board(board: &Board) {
     }
 }
 
-
 fn main() {
-    println!("Hello, world!");
+    let mut board = [None; 9];
+    let mut input = String::new();
+
+    let mut x = 0;
+
+    while game_state(true, &board).is_none() {
+        print_board(&board);
+
+        if x % 2 == 0 {
+            board = play(false, board);
+        } else {
+            std::io::stdin().read_line(&mut input).unwrap();
+
+            let index = input.trim().parse::<usize>().unwrap() - 1;
+            input.clear();
+
+            board[index] = Some(true);
+        }
+        x += 1;
+    }
+
+    print_board(&board);
 }
