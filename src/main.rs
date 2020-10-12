@@ -4,6 +4,12 @@ type Tile = Option<Player>;
 
 type Board = [Tile; 9];
 
+enum GameResult {
+    Win,
+    Draw,
+    Lose,
+}
+
 fn is_win(player: Player, board: &Board) -> bool {
     // Use array to avoid heap allocations
     let mut v = [false; 9];
@@ -33,6 +39,20 @@ fn is_lose(player: Player, board: &Board) -> bool {
 
 fn is_draw(board: &Board) -> bool {
     !is_win(true, board) && !is_lose(true, board) && board.iter().all(|x| x.is_some())
+}
+
+fn game_state(player: Player, board: &Board) -> Option<GameResult> {
+    use GameResult::{Draw, Lose, Win};
+
+    if is_win(player, board) {
+        Some(Win)
+    } else if is_lose(player, board) {
+        Some(Lose)
+    } else if is_draw(board) {
+        Some(Draw)
+    } else {
+        None
+    }
 }
 
 fn main() {
