@@ -55,6 +55,26 @@ fn game_state(player: Player, board: &Board) -> Option<GameResult> {
     }
 }
 
+fn print_board(board: &Board) {
+    let tile_to_char = |x: &Tile| match x {
+        Some(true) => 'X',
+        Some(false) => 'O',
+        None => ' ',
+    };
+
+    for (i, x) in board.iter().map(tile_to_char).enumerate() {
+        print!("{}", x);
+        if i % 3 != 2 {
+            print!("|");
+        } else if i != 8 {
+            println!("\n-----");
+        } else {
+            println!("\n");
+        }
+    }
+}
+
+
 fn main() {
     println!("Hello, world!");
 }
