@@ -55,6 +55,27 @@ fn game_state(player: Player, board: &Board) -> Option<GameResult> {
     }
 }
 
+// returns (index, score) pair, the index corresponding to the index of the best move
+// and the score corresponding to the score that move got.
+fn minmax(player: Player, board: &Board) -> (Option<usize>, i32) {
+    use GameResult::{Draw, Lose, Win};
+
+    match game_state(player, board) {
+        Some(Win) => (None, 1),
+        Some(Draw) => (None, 0),
+        Some(Lose) => (None, -1),
+        None => (0..9)
+            .filter(|&x| board[x].is_none())
+            .map(|x| {
+                let mut b = board.clone();
+                b[x] = Some(player);
+                (Some(x), -minmax(!player, &b).1)
+            })
+            .max_by_key(|x| x.1)
+            .unwrap_or((None, 0)),
+    }
+}
+
 fn print_board(board: &Board) {
     let tile_to_char = |x: &Tile| match x {
         Some(true) => 'X',
