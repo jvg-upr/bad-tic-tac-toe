@@ -44,7 +44,7 @@ pub mod board {
     }
 
     pub fn is_draw(board: &Board) -> bool {
-        is_win(player::X, board) && is_lose(player::X, board) && board.iter().all(|x| x.is_some())
+        !is_win(player::X, board) && !is_lose(player::X, board) && board.iter().all(|x| x.is_some())
     }
 
     pub fn game_state(player: player::Player, board: &Board) -> Option<i8> {
