@@ -1,40 +1,25 @@
-pub enum GameResult {
-    Win,
-    Draw,
-    Lose,
+pub mod player {
+    pub type Player = bool;
+
+    pub const X: Player = true;
+    pub const O: Player = false;
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum Player {
-    X,
-    O,
-}
+pub mod board {
+    use super::player;
 
-impl std::ops::Not for Player {
-    type Output = Self;
+    pub type Tile = Option<player::Player>;
 
-    fn not(self) -> Self::Output {
-        match self {
-            Player::X => Player::O,
-            Player::O => Player::X,
-        }
+    pub type Board = [Tile; 9];
+
+    pub fn new() -> Board {
+        [None; 9]
     }
-}
 
-pub type Tile = Option<Player>;
-
-pub trait Board {
-    fn is_win(&self, player: Player) -> bool;
-    fn is_draw(&self) -> bool;
-    fn is_lose(&self, player: Player) -> bool;
-    fn game_state(&self, player: Player) -> Option<GameResult>;
-}
-
-impl Board for [Tile; 9] {
-    fn is_win(&self, player: Player) -> bool {
+    pub fn is_win(player: player::Player, board: &Board) -> bool {
         // Use array to avoid heap allocations
         let mut v = [false; 9];
-        (0..9).for_each(|x| v[x] = self[x] == Some(player));
+        (0..9).for_each(|x| v[x] = board[x].map_or(false, |p| p == player));
 
         // Horizontal win conditions
         let h1 = v[0] && v[1] && v[2];
@@ -54,42 +39,42 @@ impl Board for [Tile; 9] {
         h1 || h2 || h3 || v1 || v2 || v3 || d1 || d2
     }
 
-    fn is_lose(&self, player: Player) -> bool {
-        self.is_win(!player)
+    pub fn is_lose(player: player::Player, board: &Board) -> bool {
+        is_win(!player, board)
     }
 
-    fn is_draw(&self) -> bool {
-        !self.is_win(Player::X) && !self.is_lose(Player::X) && self.iter().all(|x| x.is_some())
+    pub fn is_draw(board: &Board) -> bool {
+        is_win(player::X, board) && is_lose(player::X, board) && board.iter().all(|x| x.is_some())
     }
 
-    fn game_state(&self, player: Player) -> Option<GameResult> {
-        if self.is_win(player) {
-            Some(GameResult::Win)
-        } else if self.is_lose(player) {
-            Some(GameResult::Lose)
-        } else if self.is_draw() {
-            Some(GameResult::Draw)
+    pub fn game_state(player: player::Player, board: &Board) -> Option<i8> {
+        if is_win(player, board) {
+            Some(1)
+        } else if is_lose(player, board) {
+            Some(-1)
+        } else if is_draw(board) {
+            Some(0)
         } else {
             None
         }
     }
-}
 
-pub fn print_board(board: &[Tile; 9]) {
-    let tile_to_char = |x: &Tile| match x {
-        Some(Player::X) => 'X',
-        Some(Player::O) => 'O',
-        None => ' ',
-    };
+    pub fn print(board: &Board) {
+        let tile_to_char = |x: &Tile| match x {
+            Some(player::X) => 'X',
+            Some(player::O) => 'O',
+            None => ' ',
+        };
 
-    for (i, x) in board.iter().map(tile_to_char).enumerate() {
-        print!("{}", x);
-        if i % 3 != 2 {
-            print!("|");
-        } else if i != 8 {
-            println!("\n-----");
-        } else {
-            println!("\n");
+        for (i, x) in board.iter().map(tile_to_char).enumerate() {
+            print!("{}", x);
+            if i % 3 != 2 {
+                print!("|");
+            } else if i != 8 {
+                println!("\n-----");
+            } else {
+                println!("\n");
+            }
         }
     }
 }

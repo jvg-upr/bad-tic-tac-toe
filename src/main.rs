@@ -1,29 +1,29 @@
 mod game;
 mod ai;
 
-use game::{Player, Tile, Board};
+use game::{player, board};
 
 fn main() {
-    let mut board = [None; 9];
+    let mut board = board::new();
     let mut input = String::new();
 
     let mut x = 0;
 
-    while board.game_state(Player::X).is_none() {
-        game::print_board(&board);
+    while board::game_state(player::X, &board).is_none() {
+        board::print(&board);
 
         if x % 2 == 0 {
-            board = ai::play(Player::O, board);
+            board = ai::play(player::O, board);
         } else {
             std::io::stdin().read_line(&mut input).unwrap();
 
             let index = input.trim().parse::<usize>().unwrap() - 1;
             input.clear();
 
-            board[index] = Some(Player::X);
+            board[index] = Some(player::X);
         }
         x += 1;
     }
 
-    game::print_board(&board);
+    board::print(&board);
 }
