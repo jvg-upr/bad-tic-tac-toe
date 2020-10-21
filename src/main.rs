@@ -1,5 +1,4 @@
-use bad_tic_tac_toe::game::{player, board};
-use bad_tic_tac_toe::ai;
+use bad_tic_tac_toe::{player, board, ai};
 
 fn main() {
     let mut board = board::new();

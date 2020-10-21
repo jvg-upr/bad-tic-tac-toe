@@ -1,14 +1,10 @@
-pub mod player {
-    pub type Player = bool;
+pub type Player = bool;
 
-    pub const X: Player = true;
-    pub const O: Player = false;
-}
+pub const X: Player = true;
+pub const O: Player = false;
 
-pub mod board {
-    use super::player;
-
-    pub type Tile = Option<player::Player>;
+mod board {
+    pub type Tile = Option<Player>;
 
     pub type Board = [Tile; 9];
 
@@ -16,7 +12,7 @@ pub mod board {
         [None; 9]
     }
 
-    pub fn is_win(player: player::Player, board: &Board) -> bool {
+    pub fn is_win(player: Player, board: &Board) -> bool {
         // Use array to avoid heap allocations
         let mut v = [false; 9];
         (0..9).for_each(|x| v[x] = board[x].map_or(false, |p| p == player));
@@ -39,7 +35,7 @@ pub mod board {
         h1 || h2 || h3 || v1 || v2 || v3 || d1 || d2
     }
 
-    pub fn is_lose(player: player::Player, board: &Board) -> bool {
+    pub fn is_lose(player: Player, board: &Board) -> bool {
         is_win(!player, board)
     }
 
@@ -47,7 +43,7 @@ pub mod board {
         !is_win(player::X, board) && !is_lose(player::X, board) && board.iter().all(|x| x.is_some())
     }
 
-    pub fn game_state(player: player::Player, board: &Board) -> Option<i8> {
+    pub fn game_state(player: Player, board: &Board) -> Option<i8> {
         if is_win(player, board) {
             Some(1)
         } else if is_lose(player, board) {
