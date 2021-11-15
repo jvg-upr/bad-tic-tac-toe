@@ -17,26 +17,25 @@ pub mod board {
     }
 
     pub fn is_win(player: player::Player, board: &Board) -> bool {
-        // Use array to avoid heap allocations
+        // array corresponding to whether the player is in that tile or not
         let mut v = [false; 9];
-        (0..9).for_each(|x| v[x] = board[x].map_or(false, |p| p == player));
-
+        for (vitem, bitem) in v.iter_mut().zip(board.iter()) {
+            *vitem = bitem.map_or(false, |p| p == player);
+        }
         // Horizontal win conditions
-        let h1 = v[0] && v[1] && v[2];
-        let h2 = v[3] && v[4] && v[5];
-        let h3 = v[6] && v[7] && v[8];
-
+        let hwin = |row: usize| {
+            v.iter().skip(3 * row).take(3).all(|b| *b)
+        };
         // Vertical win conditions
-        let v1 = v[0] && v[3] && v[6];
-        let v2 = v[1] && v[4] && v[7];
-        let v3 = v[2] && v[5] && v[8];
-
+        let vwin = |col: usize| {
+            v.iter().skip(col).step_by(3).all(|b| *b)
+        };
         // Diagonal win conditions
         let d1 = v[0] && v[4] && v[8];
         let d2 = v[2] && v[4] && v[6];
 
         // Return true if any condition is met
-        h1 || h2 || h3 || v1 || v2 || v3 || d1 || d2
+        hwin(0) || hwin(1) || hwin(2) || vwin(0) || vwin(1) || vwin(2) || d1 || d2
     }
 
     pub fn is_lose(player: player::Player, board: &Board) -> bool {
