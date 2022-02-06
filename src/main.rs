@@ -105,7 +105,7 @@ fn main() {
     let mut board = Default::default();
     let mut input = String::new();
 
-    for &player in [true, false].iter().cycle() {
+    for &player in [X, O].iter().cycle() {
         if let GameState::InProgress = game_state(&board) {
             println!("{}", board);
             if player {
